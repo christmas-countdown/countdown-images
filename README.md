@@ -1,6 +1,6 @@
 # countdown-images
 
-25 images for the [Christmas Countdown bot for Discord](https://github.com/christmas-countdown/bot) with animated snow.
+26 images for the [Christmas Countdown bot for Discord](https://github.com/christmas-countdown/bot) with animated snow.
 
 I thought it would be quicker to manually make the 25 input images (`with-text/`, made with PenPot) than write code to automate it.
 I'm not sure I was right. 
