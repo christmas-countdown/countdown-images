@@ -17,25 +17,21 @@ for (let p = 0; p < FLAKES; p++) {
 				y: 0,
 			},
 		],
-		radius: Math.random() * 2 + 1.5,
+		radius: Math.random() * 1.75 + 1,
 		density: Math.max(FLAKES / 2, Math.random() * FLAKES),
 	});
 }
 
-// angle will be an ongoing incremental flag.
-// Sin and Cos functions will be applied to it to create vertical and horizontal movements of the flakes
 
 for (let frame = 0, angle = 0; frame <= FRAMES; frame++, angle += 0.01) {
 	for (let flake = 0; flake < FLAKES; flake++) {
 		const p = particles[flake];
-		// Updating X and Y coordinates
-		// We will add 1 to the cos function to prevent negative values which will lead flakes to move upwards
-		// Every particle has its own density which can be used to make the downward movement different for each flake
-		// Lets make it more random by adding in the radius
 		const pos = {
-			x: p.positions[p.positions.length - 1].x + ((Math.cos(angle + p.density) + p.radius) / 3),
+			x: p.positions[p.positions.length - 1].x + Math.abs((Math.cos(angle + p.density) + (4 - p.radius)) / 3),
 			// y: p.positions[p.positions.length - 1].y + (Math.sin(angle) * 2),
-			y: p.positions[p.positions.length - 1].y + ((HEIGHT / FRAMES) + (0.01 * p.density)),
+			// y: p.positions[p.positions.length - 1].y + ((HEIGHT / FRAMES) + (0.01 * p.density)),
+			// y: p.positions[p.positions.length - 1].y + ((HEIGHT / FRAMES) + (0.66 * p.radius)),
+			y: p.positions[p.positions.length - 1].y + ((HEIGHT / FRAMES) + p.radius - 1.5),
 		};
 
 		// if (pos.y < HEIGHT + 5) {
