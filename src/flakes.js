@@ -27,11 +27,10 @@ for (let frame = 0, angle = 0; frame <= FRAMES; frame++, angle += 0.01) {
 	for (let flake = 0; flake < FLAKES; flake++) {
 		const p = particles[flake];
 		const pos = {
-			x: p.positions[p.positions.length - 1].x + Math.abs((Math.cos(angle + p.density) + (4 - p.radius)) / 3),
+			x: p.positions[p.positions.length - 1].x + Math.abs((Math.cos(angle + p.density) + (3 - (p.radius / 2))) / 2),
 			// y: p.positions[p.positions.length - 1].y + (Math.sin(angle) * 2),
 			// y: p.positions[p.positions.length - 1].y + ((HEIGHT / FRAMES) + (0.01 * p.density)),
-			// y: p.positions[p.positions.length - 1].y + ((HEIGHT / FRAMES) + (0.66 * p.radius)),
-			y: p.positions[p.positions.length - 1].y + ((HEIGHT / FRAMES) + p.radius - 1.5),
+			y: p.positions[p.positions.length - 1].y + ((HEIGHT / FRAMES) + (0.5 * p.radius)),
 		};
 
 		// if (pos.y < HEIGHT + 5) {
