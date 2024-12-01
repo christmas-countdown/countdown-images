@@ -2,23 +2,26 @@
 
 import { createCanvas, loadImage } from 'canvas';
 import sharp from 'sharp';
-// import GIF from 'sharp-gif2';
-import fs from 'fs';
+import UPNG from '@pdf-lib/upng';
 import fsp from 'fs/promises';
-import { Readable } from 'stream';
 import {
 	WIDTH,
 	HEIGHT,
 	FLAKES,
 	FRAMES,
+	FPS,
 } from './constants.js';
+import { spawn } from 'child_process';
+
+/** @type {UPNG} */
+const APNG = UPNG.default;
 
 const files = await fsp.readdir('generated/with-text');
 
 for (const file of files) {
 	const name = file.split('.')[0];
 	const sleeps = parseInt(name);
-	if (sleeps !== 11) continue;
+	// if (sleeps !== 11) continue;
 
 	const canvas = createCanvas(WIDTH, HEIGHT);
 	const ctx = canvas.getContext('2d');
@@ -33,7 +36,7 @@ for (const file of files) {
 					y: 0,
 				},
 			],
-			radius: Math.random() * 2 + 1,
+			radius: Math.random() * 1.75 + 1,
 			density: Math.max(FLAKES / 2, Math.random() * FLAKES),
 		});
 	}
@@ -55,11 +58,7 @@ for (const file of files) {
 		p.positions = p.positions.slice(i).concat(p.positions.slice(0, i));
 	}
 
-	// const gif = GIF.createGif({
-	// 	width: WIDTH,
-	// 	height: HEIGHT,
-
-	// });
+	const frame_buffers = [];
 
 	for (let f = 0; f < FRAMES; f++) {
 		console.log(name, `f=${f}`);
@@ -74,19 +73,32 @@ for (const file of files) {
 			ctx.arc(pos.x, pos.y, flake.radius, 0, Math.PI * 2, true);
 		}
 		ctx.fill();
-		// gif.addFrame(canvas.toBuffer());
-		Readable
-			.from(
-				await sharp(canvas.toBuffer())
-					// .toColorspace('yuv')
-					.webp({ lossless: true })
-					.toBuffer(),
-			)
-			.pipe(
-				// fs.createWriteStream(`Z://${sleeps.toString().padStart(2, '0')}-${f.toString().padStart(3, '0')}.webp`),
-				fs.createWriteStream(`generated/frames/${sleeps.toString().padStart(2, '0')}-${f.toString().padStart(3, '0')}.webp`),
-			);
+
+		frame_buffers.push(
+			await sharp(canvas.toBuffer('image/png', { compressionLevel: 0 }))
+				.raw()
+				.toBuffer(),
+		);
 	}
 
-
+	const apng = APNG.encode(frame_buffers, WIDTH, HEIGHT, 0, Math.ceil(1000 / FPS));
+	const sequence = sleeps.toString().padStart(2, '0');
+	await fsp.writeFile(`generated/with-snow/${sequence}-animated.png`, Buffer.from(apng));
+	const child = spawn('ffmpeg', [
+		'-i',
+		`generated/with-snow/${sequence}-animated.png`,
+		'-framerate',
+		FPS,
+		'-loop',
+		'0',
+		'-preset',
+		'photo',
+		'-quality',
+		'50',
+		'-compression_level',
+		'6',
+		`generated/with-snow/${sequence}-animated.webp`,
+	]);
+	child.stdout.on('data', line => console.log(line.toString()));
+	child.stderr.on('data', line => console.error(line.toString()));
 }

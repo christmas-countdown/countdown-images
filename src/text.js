@@ -18,7 +18,7 @@ const files = await fsp.readdir('assets/originals');
 
 
 for (const file of files) {
-	const { name, ext } = file.match(/(?<name>\d+).+\.(?<ext>\w+)/).groups;
+	const { name } = file.match(/(?<name>\d+).+\.(?<ext>\w+)/).groups;
 	const sleeps = parseInt(name);
 	const bg = await sharp(`assets/originals/${file}`)
 		.resize(WIDTH, HEIGHT)
@@ -45,30 +45,30 @@ for (const file of files) {
 
 	switch (sleeps) {
 	case 0: {
-		ctx.font = `96px ${FONT2}`;
-		ctx.fillText('Merry Christmas', WIDTH / 2, 204);
+		ctx.font = `72px ${FONT2}`;
+		ctx.fillText('Merry Christmas', WIDTH / 2, 150);
 		break;
 	}
 	case 1: {
-		ctx.font = `192px ${FONT1}`;
-		ctx.fillText(sleeps.toString(), WIDTH / 2, 128);
-		ctx.font = `88px ${FONT2}`;
-		ctx.fillText('sleep left', WIDTH / 2, 272);
+		ctx.font = `144px ${FONT1}`;
+		ctx.fillText(sleeps.toString(), WIDTH / 2, 96);
+		ctx.font = `64px ${FONT2}`;
+		ctx.fillText('sleep left', WIDTH / 2, 204);
 		break;
 	}
 	default: {
-		ctx.font = `192px ${FONT1}`;
-		ctx.fillText(sleeps.toString(), WIDTH / 2, 128);
-		ctx.font = `88px ${FONT2}`;
-		ctx.fillText('sleeps left', WIDTH / 2, 272);
+		ctx.font = `144px ${FONT1}`;
+		ctx.fillText(sleeps.toString(), WIDTH / 2, 96);
+		ctx.font = `64px ${FONT2}`;
+		ctx.fillText('sleeps left', WIDTH / 2, 204);
 	}
 	}
 
-	ctx.font = `bold 14px ${FONT3}`;
+	ctx.font = `bold 10px ${FONT3}`;
 	// ctx.fillText('aka.earth/xmas', WIDTH / 2, 384);
-	ctx.fillText('christmascountdown.live', WIDTH / 2, 386);
+	ctx.fillText('christmascountdown.live', WIDTH / 2, 290);
 
 
 	// if (sleeps !== 2) continue;
-	await fsp.writeFile(`generated/with-text/${name}.${ext}`, canvas.toBuffer());
+	await fsp.writeFile(`generated/with-text/${name}.png`, canvas.toBuffer('image/png', { compressionLevel: 0 }));
 }
