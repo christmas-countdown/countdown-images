@@ -94,7 +94,7 @@ for (const file of files) {
 		'-preset',
 		'photo',
 		'-quality',
-		'50',
+		'90',
 		'-compression_level',
 		'6',
 		`generated/with-snow/${sequence}-animated.webp`,
